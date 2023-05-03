@@ -9,7 +9,7 @@ service for secure transmission of passwords
 * run ```make```
 * go to http://localhost:8000/
 
-> __Error__
+> __Warning__
 only for demo and local develop, don't use docker for production
 
 ## local develop
