@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form, render_field, render_form_row %}
+
+{% block content %}
+  <h2>one time secret</h2>
+  {{ render_form(form, button_style='success', button_size='block', action='/result', method='POST') }}
+{% endblock %}

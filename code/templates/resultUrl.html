@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form, render_field, render_form_row %}
+{% from 'bootstrap5/utils.html' import render_icon %}
+
+{% block content %}
+  <script>
+    function copyURI(evt) {
+      evt.preventDefault();
+      navigator.clipboard.writeText(evt.target.getAttribute('href')).then(() => {
+        /* clipboard successfully set */
+      }, () => {
+        /* clipboard write failed */
+      });
+    }
+  </script>
+	<pre><a href="{{ result }}">{{ result }}</a></pre>
+  <a class="btn btn-primary text-white" href="{{ result }}" onclick="copyURI(event)">Copy URL To Clipboard{{ render_icon('files') }}</a>
+{% endblock %}

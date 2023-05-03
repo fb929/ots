@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./tmp/redis/:/data/
+  web:
+    build: .
+    depends_on: [redis]
+    ports:
+      - "8000:5000"
+    volumes:
+      - ./code:/code
+    environment:
+      FLASK_DEBUG: "true"

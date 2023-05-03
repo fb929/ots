@@ -1,0 +1,7 @@
+PyYAML
+deepmerge
+redis
+flask
+Flask-WTF
+bootstrap-flask
+cryptography
