@@ -18,7 +18,13 @@ pip install --requirement ./code/requirements.txt
 rsync -avP example/config.yml build/etc/ots/
 
 # project files
-rsync -avP --exclude='.git/' --exclude='__pycache__/' --exclude='*.py[cod]' --exclude='*$py.class' ./code/ build/opt/venv/ots/web/
+rsync -avP \
+    --delete-excluded \
+    --exclude='.git/' \
+    --exclude='__pycache__/' \
+    --exclude='*.py[cod]' \
+    --exclude='*$py.class' \
+    ./code/ build/opt/venv/ots/web/
 
 # fixed venv paths
 perl -i -pe"s|${CURRENT_DIR}/build/opt/venv/ots/|/opt/venv/ots/|" $(grep -rl "${CURRENT_DIR}/build/opt/venv/ots/" build/ | grep -v '\.pyc') || exit 1
