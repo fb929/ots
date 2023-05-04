@@ -61,7 +61,7 @@ def page_not_found(e):
 
 class SecretForm(FlaskForm):
     secret = TextAreaField('Please insert secret:', validators=[DataRequired(), Length(1, 99999)])
-    expiredDatetime = DateTimeLocalField('Expired datatime (UTC):', default=datetime.datetime.now() + datetime.timedelta(days=cfg['defaultExpiredDays']))
+    expiryDatetime = DateTimeLocalField('Expiry date (UTC):', default=datetime.datetime.now() + datetime.timedelta(days=cfg['defaultExpiredDays']))
     submit = SubmitField()
 
 @app.route('/')
@@ -76,8 +76,8 @@ def result():
         for key,value in result.items():
             if key == 'secret':
                 secret = value
-            if key == 'expiredDatetime':
-                expiredDatetime = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
+            if key == 'expiryDatetime':
+                expiryDatetime = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
         if secret:
             encryptKey = Fernet.generate_key()
             encryptKeySha256 = sha256(str(cfg['salt']).encode('utf-8') + str(encryptKey).encode('utf-8')).hexdigest()
@@ -86,7 +86,7 @@ def result():
             # }}
 
             # save to redis {{
-            expireSeconds = int((expiredDatetime - datetime.datetime.now()).total_seconds())
+            expireSeconds = int((expiryDatetime - datetime.datetime.now()).total_seconds())
             app.logger.debug("expireSeconds='%s'" % expireSeconds)
             redisClient.set(encryptKeySha256,encryptedSecret,ex=expireSeconds)
             # }}
@@ -112,7 +112,7 @@ def get(encryptKeyBase64):
         encryptedSecret = redisClient.get(encryptKeySha256)
         decryptedSecret = Fernet(encryptKey).decrypt(encryptedSecret).decode('utf-8')
     except:
-        flash('secret not found, it has been downloaded or expired', 'danger')
+        flash('secret not found: it has been downloaded or expired', 'danger')
         return render_template('error.html', errorCode='404', error='404'), 404
 
     redisClient.delete(encryptKeySha256)
