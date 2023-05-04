@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := start
-SHELL=/bin/bash
+.PHONY: build
 
 start:
 	docker compose up --force-recreate --build --remove-orphans --detach
@@ -14,3 +14,9 @@ cleanTmp:
 restart: stop start
 update: stop pull start
 upgrade: stop clean start
+
+# for building rpm and deb packages via fpm
+build:
+	./build.sh
+buildClean:
+	rm -rf build/
