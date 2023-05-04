@@ -27,4 +27,4 @@ rsync -avP \
     ./code/ build/opt/venv/ots/web/
 
 # fixed venv paths
-perl -i -pe"s|${CURRENT_DIR}/build/opt/venv/ots/|/opt/venv/ots/|" $(grep -rl "${CURRENT_DIR}/build/opt/venv/ots/" build/ | grep -v '\.pyc') || exit 1
+perl -i -pe"s|${CURRENT_DIR}/build/|/|" $(grep -rl "${CURRENT_DIR}/" build/ | grep -v '\.pyc') || exit 1
