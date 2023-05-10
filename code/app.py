@@ -59,9 +59,12 @@ def page_not_found(e):
     flash('Page not found!', 'warning')
     return render_template('error.html', errorCode='404', error='404'), 404
 
+def get_default_datetime():
+    return datetime.datetime.now() + datetime.timedelta(days=cfg['defaultExpiredDays'])
+
 class SecretForm(FlaskForm):
     secret = TextAreaField('Please insert secret:', validators=[DataRequired(), Length(1, 99999)])
-    expiryDatetime = DateTimeLocalField('Expiry date (UTC):', default=datetime.datetime.now() + datetime.timedelta(days=cfg['defaultExpiredDays']))
+    expiryDatetime = DateTimeLocalField('Expiry date (UTC):', default=get_default_datetime)
     submit = SubmitField()
 
 @app.route('/')
