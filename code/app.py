@@ -100,6 +100,9 @@ def result():
             result_url_root = cfg['urlRoot']
         else:
             result_url_root = request.url_root
+        # fixed '/'
+        if result_url_root[-1] != '/':
+            result_url_root = result_url_root+'/'
         return render_template("resultUrl.html", result = result_url_root+'get/'+encryptKeyString)
 
 @app.route('/get/<encryptKeyString>')
