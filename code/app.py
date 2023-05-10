@@ -95,7 +95,6 @@ def result():
             # }}
 
             encryptKeyString = encryptKey.decode('utf-8')
-            #app.logger.debug("encryptKeyString='%s'" % encryptKeyString)
 
         if cfg['urlRoot']:
             result_url_root = cfg['urlRoot']
