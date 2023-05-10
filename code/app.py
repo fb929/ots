@@ -94,19 +94,19 @@ def result():
             redisClient.set(encryptKeySha256,encryptedSecret,ex=expireSeconds)
             # }}
 
-            encryptKeyBase64 = base64.b64encode(encryptKey).decode('utf-8')
-            app.logger.debug("encryptKeyBase64='%s'" % encryptKeyBase64)
+            encryptKeyString = encryptKey.decode('utf-8')
+            #app.logger.debug("encryptKeyString='%s'" % encryptKeyString)
 
         if cfg['urlRoot']:
             result_url_root = cfg['urlRoot']
         else:
             result_url_root = request.url_root
-        return render_template("resultUrl.html", result = result_url_root+'get/'+encryptKeyBase64)
+        return render_template("resultUrl.html", result = result_url_root+'get/'+encryptKeyString)
 
-@app.route('/get/<encryptKeyBase64>')
-def get(encryptKeyBase64):
+@app.route('/get/<encryptKeyString>')
+def get(encryptKeyString):
     try:
-        encryptKey = base64.b64decode(encryptKeyBase64.encode('utf-8'))
+        encryptKey = encryptKeyString.encode('utf-8')
         encryptKeySha256 = sha256(str(cfg['salt']).encode('utf-8') + str(encryptKey).encode('utf-8')).hexdigest()
     except:
         flash('wrong url format, please check link', 'danger')
