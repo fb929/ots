@@ -38,8 +38,6 @@ jobs:
         include:
           - arch: amd64
             rpm_arch: x86_64
-          - arch: arm64
-            rpm_arch: aarch64
     steps:
       - uses: actions/checkout@v3
 
