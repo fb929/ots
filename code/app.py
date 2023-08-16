@@ -65,6 +65,7 @@ def get_default_datetime():
 class SecretForm(FlaskForm):
     secret = TextAreaField('Please insert secret:', validators=[DataRequired(), Length(1, 99999)])
     expiryDatetime = DateTimeLocalField('Expiry date (UTC):', default=get_default_datetime)
+    qty = IntegerField('Qty:', default=1, validators=[DataRequired(), Regexp('^[0-9]*$', message='Only numbers are allowed')])
     submit = SubmitField()
 
 @app.route('/')
@@ -81,20 +82,24 @@ def result():
                 secret = value
             if key == 'expiryDatetime':
                 expiryDatetime = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
+            if key == 'qty':
+                qty = int(value)
+        encryptKeyStrings = []
         if secret:
-            encryptKey = Fernet.generate_key()
-            encryptKeySha256 = sha256(str(cfg['salt']).encode('utf-8') + str(encryptKey).encode('utf-8')).hexdigest()
-            # encrypt {{
-            encryptedSecret = Fernet(encryptKey).encrypt(secret.encode('utf-8'))
-            # }}
+            for i in range(qty):
+                encryptKey = Fernet.generate_key()
+                encryptKeySha256 = sha256(str(cfg['salt']).encode('utf-8') + str(encryptKey).encode('utf-8')).hexdigest()
+                # encrypt {{
+                encryptedSecret = Fernet(encryptKey).encrypt(secret.encode('utf-8'))
+                # }}
 
-            # save to redis {{
-            expireSeconds = int((expiryDatetime - datetime.datetime.now()).total_seconds())
-            app.logger.debug("expireSeconds='%s'" % expireSeconds)
-            redisClient.set(encryptKeySha256,encryptedSecret,ex=expireSeconds)
-            # }}
+                # save to redis {{
+                expireSeconds = int((expiryDatetime - datetime.datetime.now()).total_seconds())
+                app.logger.debug("expireSeconds='%s'" % expireSeconds)
+                redisClient.set(encryptKeySha256,encryptedSecret,ex=expireSeconds)
+                # }}
 
-            encryptKeyString = encryptKey.decode('utf-8')
+                encryptKeyStrings.append(encryptKey.decode('utf-8'))
 
         if cfg['urlRoot']:
             result_url_root = cfg['urlRoot']
@@ -103,7 +108,10 @@ def result():
         # fixed '/'
         if result_url_root[-1] != '/':
             result_url_root = result_url_root+'/'
-        return render_template("resultUrl.html", result = result_url_root+'get/'+encryptKeyString)
+        results = []
+        for encryptKeyString in encryptKeyStrings:
+            results.append(result_url_root+'get/'+encryptKeyString)
+        return render_template("resultUrl.html", results = results)
 
 @app.route('/get/<encryptKeyString>')
 def get(encryptKeyString):
