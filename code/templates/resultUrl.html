@@ -13,6 +13,13 @@
       });
     }
   </script>
-  <pre><a href="{{ result }}">{{ result }}</a></pre>
-  <a class="btn btn-primary text-white" href="{{ result }}" onclick="copyURI(event)">Copy URL To Clipboard{{ render_icon('files') }}</a>
+  {% if results|length == 1 %}
+    <h2>one time secret</h2>
+  {% else %}
+    <h2>one time secrets</h2>
+  {% endif %}
+  {% for result in results %}
+    <pre><a href="{{ result }}">{{ result }}</a></pre>
+    <a class="btn btn-primary text-white" href="{{ result }}" onclick="copyURI(event)">Copy URL To Clipboard{{ render_icon('files') }}</a>
+  {% endfor %}
 {% endblock %}
