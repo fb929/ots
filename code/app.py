@@ -64,7 +64,7 @@ def get_default_datetime():
 
 class SecretForm(FlaskForm):
     secret = TextAreaField('Please insert secret:', validators=[DataRequired(), Length(1, 99999)])
-    expiryDatetime = DateTimeLocalField('Expiry date (UTC):', default=get_default_datetime)
+    expiryDatetime = DateTimeLocalField('Expiry date (UTC):', default=get_default_datetime, format='%Y-%m-%dT%H:%M:%S')
     qty = IntegerField('Quantity:', default=1, validators=[DataRequired(), Regexp('^[0-9]*$', message='Only numbers are allowed')])
     submit = SubmitField()
 
